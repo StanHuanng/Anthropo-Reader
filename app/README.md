@@ -1,16 +1,42 @@
-# anthropo_reader
+# Anthropo-Reader (App Module)
 
-A new Flutter project.
+This directory contains the Flutter application source code for **Anthropo-Reader**.
 
-## Getting Started
+## 📱 Features
 
-This project is a starting point for a Flutter application.
+*   **Dual Theme System**:
+    *   **Parchment Mode**: Designed for long-form reading, featuring `Frank Ruhl Libre` serif font and a procedurally generated noise texture background.
+    *   **Pitch Black Mode**: Optimized for OLED screens and low-light environments.
+*   **Markdown Rendering**: High-fidelity rendering of technical articles including code blocks and tables.
+*   **Offline Support**: Gracefully degrades to mock data when Supabase connection is unavailable.
+*   **Cross-Platform**: Ready for Android, iOS, and Web.
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Setup & Run
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Prerequisites
+*   Flutter SDK (Stable channel)
+*   VS Code (Recommended) with Flutter extensions
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Running Locally
+
+1.  **Get Dependencies**:
+    ```bash
+    flutter pub get
+    ```
+
+2.  **Start App**:
+    *   **With Mock Data** (Default):
+        ```bash
+        flutter run
+        ```
+    *   **With Real Data (Supabase)**:
+        Use the VS Code launch configuration **"Anthropo Reader (Supabase Dev)"** or run:
+        ```bash
+        flutter run --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
+        ```
+
+## 📂 Project Structure
+
+*   `lib/core`: Shared models, themes, and utilities.
+*   `lib/features`: Feature-based architecture (Feed, Reader, Archive).
+*   `lib/config`: App-wide configuration and environment variables.
