@@ -44,41 +44,41 @@ ThemeData buildParchmentTheme() {
         color: parchmentTextDark,
       ),
 
-      // Headlines - Inter
-      headlineLarge: GoogleFonts.inter(
+      // Headlines - Frank Ruhl Libre (Claude-like serif)
+      headlineLarge: GoogleFonts.frankRuhlLibre(
         fontSize: 32,
         fontWeight: FontWeight.bold,
         color: parchmentTextMedium,
       ),
-      headlineMedium: GoogleFonts.inter(
+      headlineMedium: GoogleFonts.frankRuhlLibre(
         fontSize: 24,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
-      headlineSmall: GoogleFonts.inter(
+      headlineSmall: GoogleFonts.frankRuhlLibre(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
 
       // Titles
-      titleLarge: GoogleFonts.inter(
-        fontSize: 18,
+      titleLarge: GoogleFonts.frankRuhlLibre(
+        fontSize: 20, // Slightly larger for readability
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
-      titleMedium: GoogleFonts.inter(
+      titleMedium: GoogleFonts.frankRuhlLibre(
         fontSize: 16,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
-      titleSmall: GoogleFonts.inter(
+      titleSmall: GoogleFonts.frankRuhlLibre(
         fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
 
-      // Labels
+      // Labels - Keep Inter for UI elements for legibility
       labelLarge: GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w500,
@@ -92,7 +92,7 @@ ThemeData buildParchmentTheme() {
     ),
 
     // Card Theme
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: parchmentCardColor,
       elevation: 0,
       shape: RoundedRectangleBorder(

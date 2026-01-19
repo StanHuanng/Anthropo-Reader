@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Anthropo Reader (Mock Data)",
+            "request": "launch",
+            "type": "dart",
+            "program": "app/lib/main.dart",
+            "args": [
+                "--dart-define=SUPABASE_URL=",
+                "--dart-define=SUPABASE_ANON_KEY="
+            ]
+        },
+        {
+            "name": "Anthropo Reader (Supabase Dev)",
+            "request": "launch",
+            "type": "dart",
+            "program": "app/lib/main.dart",
+            "args": [
+                "--dart-define=SUPABASE_URL=https://ovytvktzhuapvictznnr.supabase.co",
+                "--dart-define=SUPABASE_ANON_KEY=sb_publishable_khGtsmD9SphqJFArckirNg_Lk-VEAiG"
+            ]
+        }
+    ]
+}

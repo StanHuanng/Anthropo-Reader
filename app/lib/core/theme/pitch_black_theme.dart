@@ -93,7 +93,7 @@ ThemeData buildPitchBlackTheme() {
     ),
 
     // Card Theme
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: pitchBlackCardColor,
       elevation: 0,
       shape: RoundedRectangleBorder(
