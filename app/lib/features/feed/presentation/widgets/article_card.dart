@@ -12,6 +12,78 @@ class ArticleCard extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
+  // 构建来源图标
+  Widget _buildSourceIcon(String source, ThemeData theme) {
+    if (source == 'github_trending') {
+      // GitHub 使用 Emoji
+      return Text(
+        '🧑‍💻',
+        style: TextStyle(fontSize: 18),
+      );
+    } else if (source == 'SCUT_JW') {
+      // 教务处使用 Emoji
+      return Text(
+        '🏫',
+        style: TextStyle(fontSize: 18),
+      );
+    } else {
+      return Icon(
+        Icons.article_outlined,
+        size: 20,
+        color: theme.colorScheme.secondary,
+      );
+    }
+  }
+
+  // 获取来源标签文本
+  String _getSourceLabel(String source) {
+    switch (source) {
+      case 'github_trending':
+        return 'GitHub Trending';
+      case 'SCUT_JW':
+        return '华工教务处';
+      default:
+        return source;
+    }
+  }
+
+  // 构建优先级徽章（仅教务通知）
+  Widget _buildPriorityBadge(Article article, ThemeData theme) {
+    // 检查文章内容是否包含优先级标识
+    final content = article.content ?? '';
+    final isHighPriority = content.contains('优先级: **HIGH**') ||
+                          content.contains('🔴');
+
+    if (!isHighPriority) return SizedBox.shrink();
+
+    return Container(
+      margin: EdgeInsets.only(left: 8),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '🔴',
+            style: TextStyle(fontSize: 10),
+          ),
+          SizedBox(width: 4),
+          Text(
+            '重要',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -25,23 +97,21 @@ class ArticleCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Source Label
+              // Source Label with Icon/Emoji
               Row(
                 children: [
-                  Icon(
-                    article.source == 'github_trending'
-                        ? Icons.code
-                        : Icons.article,
-                    size: 16,
-                    color: theme.colorScheme.primary,
-                  ),
-                  SizedBox(width: 4),
+                  // 来源图标：GitHub 用 SVG，教务处用 Emoji
+                  _buildSourceIcon(article.source, theme),
+                  SizedBox(width: 8),
                   Text(
-                    article.source == 'github_trending'
-                        ? 'GitHub Trending'
-                        : 'WeChat',
-                    style: theme.textTheme.labelSmall,
+                    _getSourceLabel(article.source),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
+                  // 优先级标识（仅教务通知）
+                  if (article.source == 'SCUT_JW')
+                    _buildPriorityBadge(article, theme),
                   Spacer(),
                   if (article.publishedAt != null)
                     Text(

@@ -24,21 +24,49 @@ class ArticleRepository {
     }
 
     try {
-      var query = _supabase!
+      // 合并 GitHub 文章和教务通知
+      List<Article> allArticles = [];
+
+      // 1. 获取 GitHub Trending 文章
+      final githubResponse = await _supabase!
           .from('articles')
-          .select();
-
-      if (source != null) {
-        query = query.eq('source', source);
-      }
-
-      final response = await query
+          .select()
           .order('published_at', ascending: false)
           .limit(limit);
 
-      return (response as List)
+      allArticles.addAll((githubResponse as List)
           .map((json) => Article.fromJson(json))
-          .toList();
+          .toList());
+
+      // 2. 获取教务通知
+      try {
+        final noticesResponse = await _supabase!
+            .from('school_notices')
+            .select()
+            .order('published_at', ascending: false)
+            .limit(limit);
+
+        allArticles.addAll((noticesResponse as List)
+            .map((json) => Article.fromJson(json))
+            .toList());
+      } catch (e) {
+        print('School notices table may not exist yet: $e');
+      }
+
+      // 3. 按发布时间排序（最新的在前）
+      allArticles.sort((a, b) {
+        if (a.publishedAt == null) return 1;
+        if (b.publishedAt == null) return -1;
+        return b.publishedAt!.compareTo(a.publishedAt!);
+      });
+
+      // 4. 根据 source 参数过滤
+      if (source != null) {
+        allArticles = allArticles.where((article) => article.source == source).toList();
+      }
+
+      // 5. 限制数量
+      return allArticles.take(limit).toList();
     } catch (e) {
       print('Error fetching articles: $e');
       // 出错时返回模拟数据
