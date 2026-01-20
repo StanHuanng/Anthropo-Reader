@@ -244,114 +244,143 @@ def fetch_notice_list(max_pages: int = 3, category: int = 0) -> List[Dict]:
     return final_list
 
 
-def fetch_notice_detail(notice_url: str) -> tuple[Optional[str], Optional[str]]:
+def fetch_notice_detail(notice_url: str, max_retries: int = 3) -> tuple[Optional[str], Optional[str]]:
     """
-    抓取通知详情页内容
+    抓取通知详情页内容（带重试机制）
 
     Args:
         notice_url: 通知详情页 URL
+        max_retries: 最大重试次数（默认 3 次）
 
     Returns:
         (Markdown 格式的正文内容, 发布日期)
     """
-    try:
-        response = requests.get(
-            notice_url,
-            headers=get_random_headers(),
-            timeout=15,
-            verify=True
-        )
-        response.raise_for_status()
-        response.encoding = 'utf-8'
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(
+                notice_url,
+                headers=get_random_headers(),
+                timeout=30,
+                verify=True
+            )
+            response.raise_for_status()
+            response.encoding = 'utf-8'
 
-        soup = BeautifulSoup(response.text, 'html.parser')
+            soup = BeautifulSoup(response.text, 'html.parser')
 
-        # 提取发布日期（多种可能的位置）
-        publish_date = None
-        date_patterns = [
-            soup.find('span', class_='publish-date'),
-            soup.find('div', class_='post-date'),
-            soup.find('time'),
-        ]
+            # 提取发布日期（多种可能的位置）
+            publish_date = None
+            date_patterns = [
+                soup.find('span', class_='publish-date'),
+                soup.find('div', class_='post-date'),
+                soup.find('time'),
+            ]
 
-        for date_elem in date_patterns:
-            if date_elem:
-                publish_date = date_elem.get_text(strip=True)
-                break
+            for date_elem in date_patterns:
+                if date_elem:
+                    publish_date = date_elem.get_text(strip=True)
+                    break
 
-        if not publish_date:
-            publish_date = datetime.now().strftime('%Y-%m-%d')
+            if not publish_date:
+                publish_date = datetime.now().strftime('%Y-%m-%d')
 
-        # 查找正文内容（根据实际网站结构）
-        content_div = (
-            soup.find('div', class_='article-content') or
-            soup.find('div', class_='post-content') or
-            soup.find('div', class_='content') or
-            soup.find('div', id='content') or
-            soup.find('article')
-        )
+            # 查找正文内容（根据实际网站结构）
+            content_div = (
+                soup.find('div', class_='article-content') or
+                soup.find('div', class_='post-content') or
+                soup.find('div', class_='content') or
+                soup.find('div', id='content') or
+                soup.find('article')
+            )
 
-        if not content_div:
-            # 备用方案：提取主要内容区域
-            main_content = soup.find('main') or soup.find('div', class_='main')
-            if main_content:
-                # 移除导航、侧边栏等干扰元素
-                for unwanted in main_content.find_all(['nav', 'aside', 'header', 'footer']):
-                    unwanted.decompose()
-                content_html = str(main_content)
+            if not content_div:
+                # 备用方案：提取主要内容区域
+                main_content = soup.find('main') or soup.find('div', class_='main')
+                if main_content:
+                    # 移除导航、侧边栏等干扰元素
+                    for unwanted in main_content.find_all(['nav', 'aside', 'header', 'footer']):
+                        unwanted.decompose()
+                    content_html = str(main_content)
+                else:
+                    # 最后备用：提取所有段落
+                    paragraphs = soup.find_all('p')
+                    content_html = ''.join(str(p) for p in paragraphs)
             else:
-                # 最后备用：提取所有段落
-                paragraphs = soup.find_all('p')
-                content_html = ''.join(str(p) for p in paragraphs)
-        else:
-            content_html = str(content_div)
+                content_html = str(content_div)
 
-        # HTML 转 Markdown
-        h = html2text.HTML2Text()
-        h.ignore_links = False
-        h.ignore_images = False
-        h.body_width = 0  # 不限制行宽
-        h.unicode_snob = True  # 保持 Unicode 字符
+            # HTML 转 Markdown
+            h = html2text.HTML2Text()
+            h.ignore_links = False
+            h.ignore_images = False
+            h.body_width = 0
+            h.unicode_snob = True
 
-        markdown_content = h.handle(content_html)
+            markdown_content = h.handle(content_html)
 
-        # 清理多余的空行
-        markdown_content = '\n'.join(
-            line for line in markdown_content.split('\n')
-            if line.strip() or line == ''
-        )
+            # 清理多余的空行
+            markdown_content = '\n'.join(
+                line for line in markdown_content.split('\n')
+                if line.strip() or line == ''
+            )
 
-        return markdown_content.strip(), publish_date
+            return markdown_content.strip(), publish_date
 
-    except Exception as e:
-        print(f"抓取详情页失败 ({notice_url}): {e}", file=sys.stderr)
-        return None, None
+        except requests.Timeout:
+            print(f"⏱️ 超时（第 {attempt + 1}/{max_retries} 次尝试）: {notice_url}", file=sys.stderr)
+            if attempt < max_retries - 1:
+                time.sleep(3)
+            continue
+
+        except requests.RequestException as e:
+            print(f"❌ 网络错误（第 {attempt + 1}/{max_retries} 次尝试）: {e}", file=sys.stderr)
+            if attempt < max_retries - 1:
+                time.sleep(3)
+            continue
+
+        except Exception as e:
+            print(f"❌ 处理错误: {e}", file=sys.stderr)
+            break
+
+    # 所有重试都失败
+    print(f"❌ 抓取详情页失败（已尝试 {max_retries} 次）: {notice_url}", file=sys.stderr)
+    return None, None
 
 
-def process_notices(notices: List[Dict], limit: int = 10) -> List[Dict]:
+def process_notices(notices: List[Dict], limit: int = 10, use_ai: bool = False) -> List[Dict]:
     """
     处理通知列表，抓取详情并生成结构化数据
 
     Args:
         notices: 通知列表
         limit: 最多处理条数
+        use_ai: 是否使用 AI 生成摘要
 
     Returns:
         结构化文章数据
     """
     articles = []
 
+    # 尝试导入 AI 模块
+    generate_summary = None
+    if use_ai:
+        try:
+            from ai_summarizer import generate_summary as ai_gen
+            generate_summary = ai_gen
+            print("✅ AI 摘要功能已启用", file=sys.stderr)
+        except ImportError:
+            print("⚠️ AI 模块未找到，将使用基础摘要", file=sys.stderr)
+
     print(f"\n开始处理通知详情（限制 {limit} 条）...", file=sys.stderr)
 
     for i, notice in enumerate(notices[:limit], 1):
         print(f"[{i}/{min(limit, len(notices))}] 处理: {notice['title'][:30]}...", file=sys.stderr)
 
-        # 抓取详情页
+        # 抓取详情页（增强错误处理）
         content, publish_date = fetch_notice_detail(notice['url'])
 
         if not content:
-            content = "**内容抓取失败，请访问原文链接查看详情。**"
-            publish_date = notice['date']
+            print(f"  ⚠️ 详情页抓取失败，跳过此通知", file=sys.stderr)
+            continue  # 跳过失败的通知，而不是存储失败数据
 
         # 使用详情页的日期（如果有）
         final_date = publish_date if publish_date else notice['date']
@@ -365,13 +394,70 @@ def process_notices(notices: List[Dict], limit: int = 10) -> List[Dict]:
             if notice['category'] not in tags:
                 tags.insert(0, notice['category'])
 
-        # 生成简短摘要（取内容前200字符，去除 Markdown 符号）
+        # 生成摘要（优先使用 AI，否则使用简单截取）
+        ai_summary = None
+        if generate_summary:
+            print(f"  🤖 正在生成 AI 摘要...", file=sys.stderr)
+            ai_summary = generate_summary(
+                content=content,
+                content_type="notice",
+                api_key=os.environ.get('SILICONFLOW_API_KEY')
+            )
+            if ai_summary:
+                print(f"  ✅ AI 摘要生成成功", file=sys.stderr)
+            else:
+                print(f"  ⚠️ AI 摘要生成失败，使用基础摘要", file=sys.stderr)
+
+        # 基础摘要（备用方案）
         content_text = content.replace('#', '').replace('*', '').replace('>', '').strip()
-        summary = content_text[:200] + '...' if len(content_text) > 200 else content_text
+        basic_summary = content_text[:200] + '...' if len(content_text) > 200 else content_text
+
+        # 处理 AI 摘要（清理格式，用于列表显示）
+        if ai_summary:
+            # 移除 Markdown 标题符号和 emoji，提取纯文本
+            clean_summary = ai_summary.replace('#', '').replace('*', '').replace('>', '').strip()
+            # 移除常见 emoji
+            import re
+            clean_summary = re.sub(r'[🎯📅⚠️🎓🔴🔵🤖📄🏫🏷️🔗]+', '', clean_summary)
+            # 只取前 150 字符作为列表摘要
+            summary = clean_summary[:150] + '...' if len(clean_summary) > 150 else clean_summary
+        else:
+            summary = basic_summary
 
         # 构造 Markdown 格式正文
         priority_emoji = '🔴' if priority == 'high' else '🔵'
-        full_content = f"""# {notice['title']}
+
+        # 根据是否有 AI 摘要，选择不同的内容格式
+        if ai_summary:
+            # 清理 AI 摘要中的 emoji
+            import re
+            clean_ai_summary = re.sub(r'[🎯📅⚠️🎓🔴🔵🤖📄🏫🏷️🔗]+\s*', '', ai_summary)
+
+            # 如果有 AI 摘要，content 显示 AI 总结 + 原文链接
+            full_content = f"""# {notice['title']}
+
+> 发布日期: {final_date}
+> 分类: {notice.get('category', '通知')}
+> 优先级: **{priority.upper()}**
+> 原文链接: [{notice['url']}]({notice['url']})
+
+---
+
+{clean_ai_summary}
+
+---
+
+## 查看完整原文
+
+如需查看完整通知内容，请点击上方原文链接访问官网。
+
+---
+
+*本文由 Anthropo-Reader 自动抓取整理 | AI 总结由硅基流动提供 | 数据来源: 华南理工大学本科生院*
+"""
+        else:
+            # 如果没有 AI 摘要，显示完整原文
+            full_content = f"""# {notice['title']}
 
 > 📅 发布日期: {final_date}
 > 🏷️ 分类: {notice.get('category', '通知')}
@@ -390,8 +476,8 @@ def process_notices(notices: List[Dict], limit: int = 10) -> List[Dict]:
         # 构造数据库记录
         article = {
             'title': notice['title'],
-            'summary': summary,
-            'content': full_content,
+            'summary': summary,  # 列表摘要（简短）
+            'content': full_content,  # 详情页内容（优先显示 AI 总结）
             'source': 'SCUT_JW',
             'source_url': notice['url'],
             'author': '华南理工大学本科生院',
@@ -399,7 +485,8 @@ def process_notices(notices: List[Dict], limit: int = 10) -> List[Dict]:
             'fetched_at': datetime.now().isoformat(),
             'priority': priority,
             'tags': tags[:5],  # 限制最多5个标签
-            'is_favorited': False
+            'is_favorited': False,
+            'ai_summary': ai_summary  # 独立保存 AI 摘要（供前端选择使用）
         }
 
         articles.append(article)

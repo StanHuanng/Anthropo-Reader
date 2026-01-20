@@ -1,8 +1,0 @@
-name = "scut-jw-proxy"
-main = "scut-jw-proxy.js"
-compatibility_date = "2024-01-01"
-
-# 部署配置
-[env.production]
-name = "scut-jw-proxy"
-workers_dev = true
