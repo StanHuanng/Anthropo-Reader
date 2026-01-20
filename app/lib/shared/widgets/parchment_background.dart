@@ -24,7 +24,7 @@ class ParchmentBackground extends StatelessWidget {
         return Stack(
           children: [
             // Base color
-            Container(color: const Color(0xFFFAF9F5)),
+            Container(color: const Color(0xFFF5F0E6)),
 
             // Procedural Noise Texture (Fallback if image missing)
             Positioned.fill(

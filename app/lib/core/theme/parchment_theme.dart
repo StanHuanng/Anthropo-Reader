@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 ThemeData buildParchmentTheme() {
-  const parchmentBackground = Color(0xFFFAF9F5); // 暖米白
+  const parchmentBackground = Color(0xFFF5F0E6); // 羊皮纸米黄色
   const parchmentCardColor = Color(0xFFFFFFFB);
   const parchmentBorderColor = Color(0xFFE8E6E1);
   const parchmentTextDark = Color(0xFF2C2C2C);
