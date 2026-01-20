@@ -6,94 +6,163 @@
 [![Supabase](https://img.shields.io/badge/Supabase-Enabled-green.svg)](https://supabase.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-## 🎯 项目愿景
+---
 
-Anthropo-Reader 通过 GitHub Actions 与 LLM 语义分析，将海量杂乱的 GitHub Trending、技术新闻与**校园教务通知**，转化为结构化、具备 Claude 风格美感且支持二次智能聚合的 Markdown 日报。
+## 🎯 项目简介
 
-## ✨ 核心特性
+Anthropo-Reader 是一款结合了 **Flutter 优雅 UI** 和 **自动化数据流** 的信息聚合应用。通过 GitHub Actions 与 Python 爬虫，每日自动抓取 GitHub Trending，并以精美的双主题界面呈现。
 
-- 🎨 **双主题视觉系统**
-  - **羊皮纸模式 (Parchment)**: `Frank Ruhl Libre` 衬线体 + 程序化噪点纹理，还原纸质阅读感。
-  - **极夜模式 (Pitch Black)**: 深黑 `#0A0A0A` 背景，专为 OLED 屏幕优化。
+### 为什么开发这个 App？
 
-- 🔄 **全自动化数据流**
-  - **GitHub Trending**: 每日自动抓取 AI、前端、Rust 等热门领域。
-  - **Serverless**: 结合 Python 脚本与 GitHub Actions，零成本运维。
-  - **智能降级**: 无网环境下自动切换至本地模拟数据，演示无忧。
+- 📚 **信息过载时代的解决方案**：从海量信息中自动筛选出真正有价值的技术内容
+- 🎨 **阅读体验优先**：Claude 风格的羊皮纸主题 + 极夜模式，拒绝千篇一律的设计
+- 🔄 **全自动化**：基于 GitHub Actions 的定时任务，零服务器成本
 
-- 🏫 **校园情报局 (开发中)**
-  - 针对**微电子专业**定制的教务通知抓取。
-  - 智能过滤选课、保研、考试等关键信息。
+---
 
-## 🏗️ 技术栈
+## ✨ 核心功能
 
-- **前端**: Flutter (Skia 引擎)
-- **数据库**: Supabase (PostgreSQL + RLS)
-- **自动化**: GitHub Actions + Python (Requests/BeautifulSoup)
-- **AI**: (规划中) Claude 3.5 / GPT-4o 用于内容深度摘要
+### 🎨 双主题视觉系统
+
+<table>
+<tr>
+<td width="50%">
+
+**羊皮纸模式 (Parchment)**
+- `Frank Ruhl Libre` 经典衬线字体
+- 程序化噪点纹理，模拟纸质阅读感
+- 温暖的米黄色调 `#F5F0E6`
+
+</td>
+<td width="50%">
+
+**极夜模式 (Pitch Black)**
+- 深黑 `#0A0A0A` 背景
+- OLED 屏幕优化，省电护眼
+- 高对比度文字渲染
+
+</td>
+</tr>
+</table>
+
+### 📰 GitHub Trending 自动聚合
+
+- **每日自动抓取**：AI、前端、Rust、Go 等热门技术领域
+- **Serverless 架构**：基于 GitHub Actions 定时任务
+- **云端存储**：Supabase 数据库，支持多设备同步
+
+### 📖 Markdown 阅读器
+
+- 高性能渲染引擎，支持代码高亮
+- 图片缓存优化，流畅阅读体验
+- 沉浸式全屏模式
+
+---
+
+## 🛠️ 技术栈
+
+- **前端**: Flutter 3.0+ (Dart)
+- **数据库**: Supabase (PostgreSQL)
+- **自动化**: GitHub Actions + Python
+- **UI 库**: `flutter_markdown`, `google_fonts`, `cached_network_image`
+
+---
 
 ## 📂 项目结构
 
 ```
 Anthropo-Reader/
-├── app/                          # Flutter 客户端源码
+├── app/                              # Flutter 应用源码
 │   ├── lib/
-│   │   ├── features/feed/        # 信息流模块
-│   │   ├── features/reader/      # Markdown 渲染引擎
-│   │   └── core/theme/           # 双主题系统
-│   └── pubspec.yaml
-├── scripts/                      # Python 数据爬虫
-│   ├── fetch_github_trending.py  # GitHub 趋势抓取 (已上线)
-│   └── fetch_scut_jw.py          # 教务处爬虫 (开发中)
-├── .github/workflows/            # 每日定时任务配置
-└── claude.md                     # 🤖 AI 协作开发指南 (核心文档)
+│   │   ├── features/feed/            # 信息流模块
+│   │   ├── features/reader/          # Markdown 阅读器
+│   │   ├── core/theme/               # 双主题系统
+│   │   └── config/                   # Supabase 配置
+│   └── assets/                       # 图标与纹理资源
+├── scripts/
+│   └── fetch_github_trending.py      # GitHub 数据抓取脚本
+└── .github/workflows/
+    └── daily_update.yml              # 每日自动化任务
 ```
+
+---
 
 ## 🚀 快速开始
 
-1. **环境准备**
-   - Flutter SDK
-   - Python 3.8+ (用于运行爬虫)
+### 环境要求
 
-2. **启动应用**
-   ```bash
-   cd app
-   flutter pub get
-   flutter run
-   ```
+- Flutter SDK >= 3.0
+- Android Studio / Xcode (可选)
 
-3. **手动触发数据更新**
-   ```bash
-   # 需配置 Supabase 密钥
-   python scripts/fetch_github_trending.py --limit 10 --upload
-   ```
+### 运行应用
 
-## 🛣️ 开发路线图
+```bash
+# 克隆项目
+git clone https://github.com/your-username/Anthropo-Reader.git
+cd Anthropo-Reader/app
 
-### ✅ Phase 1: 基础框架 (Completed)
-- [x] Flutter 双主题 UI 搭建 (Parchment/Pitch Black)
-- [x] Markdown 高性能渲染器
-- [x] 模拟数据源实现
+# 安装依赖
+flutter pub get
 
-### ✅ Phase 2: 后端自动化 (Completed)
-- [x] Supabase 数据库接入
-- [x] Python 抓取脚本 (GitHub Trending)
-- [x] GitHub Actions 定时任务配置
+# 运行
+flutter run
+```
 
-### 🚧 Phase 3: 校园与 AI (In Progress)
-- [ ] **华工教务处爬虫开发** (SCUT Crawler)
-- [ ] 针对微电子专业的智能过滤规则
-- [ ] 接入 LLM API 生成文章摘要
+### 打包 APK
 
-### ⏳ Phase 4: 体验与发布 (Planned)
-- [ ] 文章收藏与归档功能
-- [ ] Android APK 打包发布
+```bash
+# 构建发布版 APK
+flutter build apk --release
 
-## 📖 开发文档
+# APK 输出路径
+# app/build/app/outputs/flutter-apk/app-release.apk
+```
 
-详细的开发指南、代码规范及下一步计划请查阅：
-👉 **[CLAUDE.md](./claude.md)** (本项目最重要的文档)
+---
+
+## 🔧 配置说明
+
+### Supabase 配置
+
+在 `app/lib/config/supabase_config.dart` 中配置你的 Supabase 密钥：
+
+```dart
+static const String supabaseUrl = 'YOUR_SUPABASE_URL';
+static const String supabaseAnonKey = 'YOUR_ANON_KEY';
+```
+
+### GitHub Actions 配置
+
+在仓库 Settings → Secrets 中添加：
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_KEY`
+
+---
+
+## 🎨 功能展示
+
+### 信息流页面
+- 卡片式布局展示文章列表
+- 支持下拉刷新
+- 实时主题切换
+
+### 文章阅读页
+- Markdown 完整渲染
+- 代码语法高亮
+- 图片缓存加载
+
+### 主题切换
+- 点击顶部图标即可切换主题
+- 基于 Provider 状态管理
+
+---
+
+## 📄 开源协议
+
+本项目采用 [MIT License](LICENSE) 开源协议。
 
 ---
 
 **📖 阅读即修行，聚合即智慧 ✨**
+
+*Built with ❤️ by engineering students, for engineering students.*
