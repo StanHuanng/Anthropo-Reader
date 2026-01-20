@@ -46,10 +46,20 @@ USER_AGENTS = [
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'
 ]
 
+# Cloudflare Workers 代理配置
+USE_CLOUDFLARE_PROXY = os.environ.get('USE_CLOUDFLARE_PROXY', 'false').lower() == 'true'
+CLOUDFLARE_WORKER_URL = os.environ.get('CLOUDFLARE_WORKER_URL', '')
+
 # 教务处网站配置
 JW_BASE_URL = "https://jw.scut.edu.cn"
 JW_NOTICE_URL = f"{JW_BASE_URL}/zhinan/cms/toPosts.do"
 JW_API_URL = f"{JW_BASE_URL}/zhinan/cms/article/v2/findInformNotice.do"  # AJAX API 接口
+
+# 如果启用 Cloudflare 代理，替换为 Worker URL
+if USE_CLOUDFLARE_PROXY and CLOUDFLARE_WORKER_URL:
+    print(f"✅ 使用 Cloudflare Workers 代理: {CLOUDFLARE_WORKER_URL}", file=sys.stderr)
+    JW_NOTICE_URL = f"{CLOUDFLARE_WORKER_URL}/toPosts.do"
+    JW_API_URL = f"{CLOUDFLARE_WORKER_URL}/findInformNotice.do"
 
 
 # ==================== 核心功能 ====================

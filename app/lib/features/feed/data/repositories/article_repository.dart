@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/models/article.dart';
 import '../../../../config/supabase_config.dart';
@@ -7,7 +8,7 @@ class ArticleRepository {
   final SupabaseClient? _supabase;
   final bool useMockData;
 
-  ArticleRepository({this.useMockData = true})
+  ArticleRepository({this.useMockData = false})
       : _supabase = SupabaseConfig.isConfigured
           ? Supabase.instance.client
           : null;
@@ -16,10 +17,18 @@ class ArticleRepository {
     String? source,
     int limit = 50,
   }) async {
-    // 如果使用模拟数据或 Supabase 未配置
-    if (useMockData || _supabase == null) {
-      // Simulate network delay
+    // 如果使用模拟数据
+    if (useMockData) {
       await Future.delayed(Duration(milliseconds: 800));
+      return MockArticleDataSource.getMockArticles();
+    }
+
+    // 检查 Supabase 是否已初始化
+    if (_supabase == null) {
+      print('⚠️ Supabase 未初始化，请检查网络连接和配置');
+      if (kDebugMode) {
+        throw Exception('Supabase 未初始化');
+      }
       return MockArticleDataSource.getMockArticles();
     }
 
@@ -68,8 +77,13 @@ class ArticleRepository {
       // 5. 限制数量
       return allArticles.take(limit).toList();
     } catch (e) {
-      print('Error fetching articles: $e');
-      // 出错时返回模拟数据
+      print('❌ 数据库查询失败: $e');
+      print('Stack trace: ${StackTrace.current}');
+      // 开发模式抛出错误，便于调试
+      if (kDebugMode) {
+        rethrow;
+      }
+      // 生产模式降级到 Mock 数据
       return MockArticleDataSource.getMockArticles();
     }
   }

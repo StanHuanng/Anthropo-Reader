@@ -82,16 +82,21 @@ jobs:
           echo "✅ GitHub Trending 抓取完成"
 
           # ==================== 华工教务通知 ====================
-          echo ""
-          echo "🏫 [2/3] 抓取华工教务通知..."
-
-          python fetch_scut_jw.py \
-            --upload \
-            --supabase-url "$SUPABASE_URL" \
-            --supabase-key "$SUPABASE_KEY" \
-            || echo "⚠️ 教务通知抓取失败，继续..."
-
-          echo "✅ 教务通知抓取完成"
+          # 暂时禁用：需要 SSO 统一认证，GitHub Actions 无法自动登录
+          # 如需使用，请在校园网环境下手动运行：
+          #   cd scripts
+          #   python fetch_scut_jw.py --upload --supabase-url "..." --supabase-key "..."
+          #
+          # echo ""
+          # echo "🏫 [2/3] 抓取华工教务通知..."
+          #
+          # python fetch_scut_jw.py \
+          #   --upload \
+          #   --supabase-url "$SUPABASE_URL" \
+          #   --supabase-key "$SUPABASE_KEY" \
+          #   || echo "⚠️ 教务通知抓取失败，继续..."
+          #
+          # echo "✅ 教务通知抓取完成"
 
           # ==================== 完成 ====================
           echo ""
