@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/theme_provider.dart';
 import 'config/supabase_config.dart';
-import 'features/feed/presentation/pages/feed_page.dart';
+import 'features/home/presentation/pages/home_shell.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,7 @@ class AnthropoReaderApp extends StatelessWidget {
             title: 'Anthropo Reader',
             debugShowCheckedModeBanner: false,
             theme: themeProvider.currentTheme,
-            home: FeedPage(),
+            home: const HomeShell(),
           );
         },
       ),

@@ -9,7 +9,11 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash($env:SUPABASE_URL=\"https://ovytvktzhuapvictznnr.supabase.co\")",
+      "Bash($env:SUPABASE_KEY=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92eXR2a3R6aHVhcHZpY3R6bm5yIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2ODc3NDExOSwiZXhwIjoyMDg0MzUwMTE5fQ.OGs969AFL0cv4KfUTVfGvgOpIz4W9IIsx1Ga9bpqsCM\")",
+      "Bash($env:SILICONFLOW_API_KEY=\"sk-jglsdgaygjgjcgttnqxcadbpfgpncphvkggkwvixsaclbkfa\")",
+      "Bash(__NEW_LINE_645fcbe7b4a592a1__ cd e:/Vibe_coding/Anthropo-Reader/scripts)"
     ]
   }
 }

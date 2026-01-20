@@ -13,82 +13,114 @@ class ArticleRepository {
           ? Supabase.instance.client
           : null;
 
+  /// 获取聚合文章列表
+  /// [source] 可选，指定来源（'github_trending', 'SCUT_JW' 等）
   Future<List<Article>> fetchArticles({
     String? source,
     int limit = 50,
   }) async {
-    // 如果使用模拟数据
-    if (useMockData) {
-      await Future.delayed(Duration(milliseconds: 800));
-      return MockArticleDataSource.getMockArticles();
-    }
-
-    // 检查 Supabase 是否已初始化
-    if (_supabase == null) {
-      print('⚠️ Supabase 未初始化，请检查网络连接和配置');
-      if (kDebugMode) {
-        throw Exception('Supabase 未初始化');
+    // 1. Mock 数据处理
+    if (useMockData || _supabase == null) {
+      if (_supabase == null && kDebugMode) {
+        print('⚠️ Supabase 未初始化，返回 Mock 数据');
       }
       return MockArticleDataSource.getMockArticles();
     }
 
     try {
-      // 合并 GitHub 文章和教务通知
       List<Article> allArticles = [];
+      List<Future<List<Article>>> queries = [];
 
-      // 1. 获取 GitHub Trending 文章
-      final githubResponse = await _supabase!
-          .from('articles')
-          .select()
-          .order('published_at', ascending: false)
-          .limit(limit);
-
-      allArticles.addAll((githubResponse as List)
-          .map((json) => Article.fromJson(json))
-          .toList());
-
-      // 2. 获取教务通知
-      try {
-        final noticesResponse = await _supabase!
-            .from('school_notices')
-            .select()
-            .order('published_at', ascending: false)
-            .limit(limit);
-
-        allArticles.addAll((noticesResponse as List)
-            .map((json) => Article.fromJson(json))
-            .toList());
-      } catch (e) {
-        print('School notices table may not exist yet: $e');
+      // 2. 根据 source 决定查询哪些表
+      // 如果 source 为空，或者是 'github_trending'，则查询 articles 表
+      if (source == null || source == 'github_trending') {
+        queries.add(_fetchFromTable('articles', limit));
       }
 
-      // 3. 按发布时间排序（最新的在前）
+      // 如果 source 为空，或者是 'SCUT_JW'，则查询 school_notices 表
+      if (source == null || source == 'SCUT_JW') {
+        queries.add(_fetchFromTable('school_notices', limit));
+      }
+
+      // 如果 source 为空，或者 source 不是上述两者（即新闻类），则查询 news 表
+      if (source == null || (source != 'github_trending' && source != 'SCUT_JW')) {
+        queries.add(_fetchFromTable('news', limit));
+      }
+
+      // 3. 并行执行查询
+      final results = await Future.wait(queries);
+      for (var list in results) {
+        allArticles.addAll(list);
+      }
+
+      // 4. 内存排序：按发布时间倒序
       allArticles.sort((a, b) {
         if (a.publishedAt == null) return 1;
         if (b.publishedAt == null) return -1;
         return b.publishedAt!.compareTo(a.publishedAt!);
       });
 
-      // 4. 根据 source 参数过滤
+      // 5. 如果指定了具体 source，进行精确过滤 (去除非目标数据)
       if (source != null) {
         allArticles = allArticles.where((article) => article.source == source).toList();
       }
 
-      // 5. 限制数量
       return allArticles.take(limit).toList();
     } catch (e) {
       print('❌ 数据库查询失败: $e');
-      print('Stack trace: ${StackTrace.current}');
-      // 开发模式抛出错误，便于调试
-      if (kDebugMode) {
-        rethrow;
-      }
-      // 生产模式降级到 Mock 数据
+      if (kDebugMode) rethrow;
       return MockArticleDataSource.getMockArticles();
     }
   }
 
+  /// 专门获取新闻（支持分类）
+  Future<List<Article>> fetchNews({
+    String? category,
+    int limit = 50,
+  }) async {
+    if (useMockData || _supabase == null) return [];
+
+    try {
+      // Step 1: Start query
+      PostgrestFilterBuilder query = _supabase!.from('news').select();
+
+      // Step 2: Apply filters
+      if (category != null && category != 'all') {
+        query = query.eq('category', category);
+      }
+
+      // Step 3: Apply sorting and limit
+      final response = await query
+          .order('published_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((json) => Article.fromJson(json)).toList();
+    } catch (e) {
+      print('Error fetching news: $e');
+      return [];
+    }
+  }
+
+  /// 辅助方法：通用表查询
+  Future<List<Article>> _fetchFromTable(String tableName, int limit) async {
+    try {
+      final response = await _supabase!
+          .from(tableName)
+          .select()
+          .order('published_at', ascending: false)
+          .limit(limit);
+
+      return (response as List).map((json) => Article.fromJson(json)).toList();
+    } catch (e) {
+      // 在多表查询中，如果某个表不存在（例如 news 表还没建好），我们不希望整个查询失败
+      print('⚠️ 查询表 $tableName 失败 (可能表不存在): $e');
+      return [];
+    }
+  }
+
   Future<Article?> fetchArticleById(String id) async {
+    // 注意：目前 fetchArticleById 主要用于 articles 表
+    // 如果需要支持多表，这里需要重构，或者传入表名参数
     if (useMockData || _supabase == null) {
       return MockArticleDataSource.getMockArticles()
           .firstWhere((a) => a.id == id);
@@ -111,6 +143,7 @@ class ArticleRepository {
     if (_supabase == null) return false;
 
     try {
+      // 暂时只支持 articles 表的收藏
       await _supabase!
           .from('articles')
           .update({'is_favorited': isFavorited})

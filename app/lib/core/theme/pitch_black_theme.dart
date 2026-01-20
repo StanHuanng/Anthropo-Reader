@@ -141,5 +141,21 @@ ThemeData buildPitchBlackTheme() {
       thickness: 1,
       space: 1,
     ),
+
+    // Bottom Navigation Bar Theme
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: pitchBlackBackground,
+      selectedItemColor: Color(0xFFE0D4C8),
+      unselectedItemColor: Color(0xFF666666),
+      selectedLabelStyle: GoogleFonts.inter(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: GoogleFonts.inter(
+        fontSize: 12,
+      ),
+      type: BottomNavigationBarType.fixed,
+      elevation: 0,
+    ),
   );
 }

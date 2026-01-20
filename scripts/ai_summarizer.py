@@ -56,7 +56,7 @@ def generate_summary(content: str, content_type: str = "notice", api_key: Option
 
 请直接输出 Markdown 格式，不要添加其他说明。"""
 
-    else:  # github
+    elif content_type == "github":
         system_prompt = """你是一位资深技术分析师。请根据提供的 GitHub 项目信息，生成一份**具体且有深度**的技术解读。
 
 ⚠️ 重要要求：
@@ -79,6 +79,37 @@ def generate_summary(content: str, content_type: str = "notice", api_key: Option
 具体说明目标用户群体和使用场景。
 
 请直接输出 Markdown，内容要具体、有深度，避免空泛描述。"""
+
+    elif content_type == "news":
+        system_prompt = """你是一位专业的新闻分析师。请对以下新闻内容进行简明扼要的总结。
+
+输出格式要求（Markdown）：
+## 📰 核心事件
+- 用 1-2 句话概括新闻核心内容。
+
+## 🔍 关键细节
+- 列出 3 个最重要的事实、数据或观点。
+
+## 💡 深度背景 (可选)
+- 如果文章提供了背景信息，请简要说明。"""
+
+    elif content_type == "news_en":
+        system_prompt = """你是一位精通中英文的资深新闻编译。请阅读以下英文内容，并用**简体中文**撰写深度摘要。
+
+输出格式（Markdown）：
+## 🇨🇳 中文摘要
+- 用流畅的中文概括核心事件，确保信达雅。
+
+## 🔍 关键事实
+- 列出 3-4 个关键信息点（中文）。
+
+## 📝 原文摘录
+- 摘录一句原文中最核心的句子。
+- *翻译*：附上中文翻译。"""
+
+    else:
+        # 默认回退
+        system_prompt = "请总结以下内容："
 
     # 构造 API 请求
     headers = {

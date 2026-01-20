@@ -11,6 +11,8 @@ class Article {
   final List<String> tags;
   final bool isFavorited;
   final String? aiSummary; // AI 生成的智能摘要
+  final String? priority; // 'high' | 'low' (用于教务通知)
+  final String? category; // 'domestic' | 'international' | 'tech' (用于新闻)
 
   Article({
     required this.id,
@@ -25,6 +27,8 @@ class Article {
     this.tags = const [],
     this.isFavorited = false,
     this.aiSummary,
+    this.priority,
+    this.category,
   });
 
   factory Article.fromJson(Map<String, dynamic> json) {
@@ -43,6 +47,8 @@ class Article {
       tags: json['tags'] != null ? List<String>.from(json['tags']) : [],
       isFavorited: json['is_favorited'] ?? false,
       aiSummary: json['ai_summary'],
+      priority: json['priority'],
+      category: json['category'],
     );
   }
 
@@ -60,6 +66,8 @@ class Article {
       'tags': tags,
       'is_favorited': isFavorited,
       'ai_summary': aiSummary,
+      'priority': priority,
+      'category': category,
     };
   }
 
@@ -76,6 +84,8 @@ class Article {
     List<String>? tags,
     bool? isFavorited,
     String? aiSummary,
+    String? priority,
+    String? category,
   }) {
     return Article(
       id: id ?? this.id,
@@ -90,6 +100,8 @@ class Article {
       tags: tags ?? this.tags,
       isFavorited: isFavorited ?? this.isFavorited,
       aiSummary: aiSummary ?? this.aiSummary,
+      priority: priority ?? this.priority,
+      category: category ?? this.category,
     );
   }
 }

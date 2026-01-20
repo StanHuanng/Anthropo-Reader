@@ -140,5 +140,21 @@ ThemeData buildParchmentTheme() {
       thickness: 1,
       space: 1,
     ),
+
+    // Bottom Navigation Bar Theme
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: parchmentBackground,
+      selectedItemColor: Color(0xFF8B7355),
+      unselectedItemColor: Color(0xFF9E9E9E),
+      selectedLabelStyle: GoogleFonts.inter(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: GoogleFonts.inter(
+        fontSize: 12,
+      ),
+      type: BottomNavigationBarType.fixed,
+      elevation: 8,
+    ),
   );
 }
