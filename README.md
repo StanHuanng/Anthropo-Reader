@@ -1,6 +1,6 @@
 # 📱 Anthropo-Reader
 
-> 一款专为工程背景用户设计的自动化信息聚合 App，集技术前沿与校园情报于一体。
+> 我为自己打造的**个人信息策展工具**——一款专注于技术前沿阅读的轻量级应用。
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.0+-blue.svg)](https://flutter.dev/)
 [![Supabase](https://img.shields.io/badge/Supabase-Enabled-green.svg)](https://supabase.com/)
@@ -8,15 +8,14 @@
 
 ---
 
-## 🎯 项目简介
+## 🎯 项目初心
 
-Anthropo-Reader 是一款结合了 **Flutter 优雅 UI** 和 **自动化数据流** 的信息聚合应用。通过 GitHub Actions 与 Python 爬虫，每日自动抓取 GitHub Trending，并以精美的双主题界面呈现。
+Anthropo-Reader 是一个**纯个人使用工具**，解决我日常的一个具体痛点：
 
-### 为什么开发这个 App？
-
-- 📚 **信息过载时代的解决方案**：从海量信息中自动筛选出真正有价值的技术内容
-- 🎨 **阅读体验优先**：Claude 风格的羊皮纸主题 + 极夜模式，拒绝千篇一律的设计
-- 🔄 **全自动化**：基于 GitHub Actions 的定时任务，零服务器成本
+在信息爆炸时代，我想要：
+- 📚 **自动化聚合**：每天自动抓取 GitHub Trending，无需手动浏览
+- 🎨 **舒适的阅读体验**：拒绝千篇一律的 App 设计，用美学提升阅读质量
+- ✍️ **专注而优雅**：一个简洁的工具，专心做好阅读这一件事
 
 ---
 
@@ -28,18 +27,25 @@ Anthropo-Reader 是一款结合了 **Flutter 优雅 UI** 和 **自动化数据�
 <tr>
 <td width="50%">
 
-**羊皮纸模式 (Parchment)**
-- `Frank Ruhl Libre` 经典衬线字体
-- 程序化噪点纹理，模拟纸质阅读感
-- 温暖的米黄色调 `#F5F0E6`
+**羊皮纸主题 (Parchment)**
+
+古典书房的温暖气质
+- `Frank Ruhl Libre` 衬线字体
+- 程序化噪点纹理，还原纸质感
+- 温暖米黄 `#F5F0E6`，减少眼疲劳
+- 适合日间专注阅读
 
 </td>
 <td width="50%">
 
-**极夜模式 (Pitch Black)**
-- 深黑 `#0A0A0A` 背景
-- OLED 屏幕优化，省电护眼
-- 高对比度文字渲染
+**极夜主题 (Pitch Black)**
+
+为夜间阅读设计
+
+- 纯黑 `#0A0A0A` 背景
+- OLED 屏幕优化，护眼省电
+- 高对比度，文字清晰
+- 沉浸式无干扰体验
 
 </td>
 </tr>
@@ -47,24 +53,29 @@ Anthropo-Reader 是一款结合了 **Flutter 优雅 UI** 和 **自动化数据�
 
 ### 📰 GitHub Trending 自动聚合
 
-- **每日自动抓取**：AI、前端、Rust、Go 等热门技术领域
-- **Serverless 架构**：基于 GitHub Actions 定时任务
-- **云端存储**：Supabase 数据库，支持多设备同步
+每日自动抓取，零手动操作
+- 🤖 每天定时自动更新热门项目
+- 🔗 GitHub Actions 驱动的 Serverless 架构
+- 💾 Supabase 云端存储，设备间同步
 
 ### 📖 Markdown 阅读器
 
-- 高性能渲染引擎，支持代码高亮
-- 图片缓存优化，流畅阅读体验
-- 沉浸式全屏模式
+为阅读而优化的简洁设计
+- ⚡ 高性能渲染，流畅阅读体验
+- 🌈 代码语法高亮
+- 🖼️ 图片智能缓存加载
+- 🌙 全屏沉浸模式
 
 ---
 
 ## 🛠️ 技术栈
 
-- **前端**: Flutter 3.0+ (Dart)
-- **数据库**: Supabase (PostgreSQL)
-- **自动化**: GitHub Actions + Python
-- **UI 库**: `flutter_markdown`, `google_fonts`, `cached_network_image`
+| 层级 | 技术 | 用途 |
+|------|------|------|
+| **前端** | Flutter 3.0+ | 跨平台应用 |
+| **数据库** | Supabase (PostgreSQL) | 云端数据存储 |
+| **自动化** | GitHub Actions + Python | 定时数据抓取 |
+| **UI 库** | flutter_markdown, google_fonts | 渲染和排版 |
 
 ---
 
@@ -72,17 +83,23 @@ Anthropo-Reader 是一款结合了 **Flutter 优雅 UI** 和 **自动化数据�
 
 ```
 Anthropo-Reader/
-├── app/                              # Flutter 应用源码
+├── app/                              # Flutter 应用
 │   ├── lib/
-│   │   ├── features/feed/            # 信息流模块
-│   │   ├── features/reader/          # Markdown 阅读器
-│   │   ├── core/theme/               # 双主题系统
-│   │   └── config/                   # Supabase 配置
-│   └── assets/                       # 图标与纹理资源
+│   │   ├── features/
+│   │   │   ├── feed/                 # 信息流页面
+│   │   │   └── reader/               # Markdown 阅读器
+│   │   ├── core/
+│   │   │   ├── theme/                # 双主题系统
+│   │   │   └── config/               # Supabase 配置
+│   │   └── widgets/                  # UI 组件
+│   └── assets/
+│       ├── fonts/                    # 自定义字体
+│       ├── textures/                 # 纹理资源
+│       └── icons/                    # 图标
 ├── scripts/
-│   └── fetch_github_trending.py      # GitHub 数据抓取脚本
+│   └── fetch_github_trending.py      # 爬虫脚本
 └── .github/workflows/
-    └── daily_update.yml              # 每日自动化任务
+    └── daily_update.yml              # 每日定时任务
 ```
 
 ---
@@ -91,10 +108,12 @@ Anthropo-Reader/
 
 ### 环境要求
 
-- Flutter SDK >= 3.0
-- Android Studio / Xcode (可选)
+```bash
+Flutter SDK >= 3.0
+Dart >= 2.17
+```
 
-### 运行应用
+### 本地运行
 
 ```bash
 # 克隆项目
@@ -108,14 +127,12 @@ flutter pub get
 flutter run
 ```
 
-### 打包 APK
+### 打包应用
 
 ```bash
-# 构建发布版 APK
+# 构建 APK
 flutter build apk --release
-
-# APK 输出路径
-# app/build/app/outputs/flutter-apk/app-release.apk
+# 输出：app/build/app/outputs/flutter-apk/app-release.apk
 ```
 
 ---
@@ -124,7 +141,7 @@ flutter build apk --release
 
 ### Supabase 配置
 
-在 `app/lib/config/supabase_config.dart` 中配置你的 Supabase 密钥：
+在 `lib/config/supabase_config.dart` 中填入你的密钥：
 
 ```dart
 static const String supabaseUrl = 'YOUR_SUPABASE_URL';
@@ -133,36 +150,44 @@ static const String supabaseAnonKey = 'YOUR_ANON_KEY';
 
 ### GitHub Actions 配置
 
-在仓库 Settings → Secrets 中添加：
-- `SUPABASE_URL`
-- `SUPABASE_SERVICE_KEY`
+在仓库 Settings 中添加以下 Secrets：
+- `SUPABASE_URL` — Supabase 项目 URL
+- `SUPABASE_SERVICE_KEY` — 服务密钥
 
 ---
 
-## 🎨 功能展示
+## 🎨 设计理念
 
-### 信息流页面
-- 卡片式布局展示文章列表
-- 支持下拉刷新
-- 实时主题切换
+### 排版与美学
+- 基于黄金比例的间距
+- 衬线字体与无衬线的搭配
+- 色彩心理学的应用
 
-### 文章阅读页
-- Markdown 完整渲染
-- 代码语法高亮
-- 图片缓存加载
+### 交互体验
+- 微妙的动画，不分散注意力
+- 书籍翻页的自然感
+- 直观的手势交互
 
-### 主题切换
-- 点击顶部图标即可切换主题
-- 基于 Provider 状态管理
+### 可用性
+- 高对比度支持
+- 可调节的字体大小和行距
+- 屏幕阅读器兼容
+
+---
+
+## 💭 为什么做这个
+
+> "工具应该隐形，只让内容闪闪发光。"
+
+这是我为自己设计的工具。我不想用通用的新闻聚合应用，因为它们往往过度设计、功能冗余。我只需要：每天自动拿到最新的技术资讯，用一个舒适优雅的界面来阅读。
 
 ---
 
 ## 📄 开源协议
 
-本项目采用 [MIT License](LICENSE) 开源协议。
+[MIT License](LICENSE)
 
 ---
 
-**📖 阅读即修行，聚合即智慧 ✨**
+**阅读即修行。** ✨
 
-*Built with ❤️ by engineering students, for engineering students.*
