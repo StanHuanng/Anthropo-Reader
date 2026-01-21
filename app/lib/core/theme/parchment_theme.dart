@@ -27,66 +27,66 @@ ThemeData buildParchmentTheme() {
 
     // Text Theme
     textTheme: TextTheme(
-      // Body text - Lora
-      bodyLarge: GoogleFonts.lora(
+      // Body text - Spectral
+      bodyLarge: GoogleFonts.spectral(
         fontSize: 18,
         height: 1.6,
         color: parchmentTextDark,
       ),
-      bodyMedium: GoogleFonts.lora(
+      bodyMedium: GoogleFonts.spectral(
         fontSize: 16,
         height: 1.6,
         color: parchmentTextDark,
       ),
-      bodySmall: GoogleFonts.lora(
+      bodySmall: GoogleFonts.spectral(
         fontSize: 14,
         height: 1.5,
         color: parchmentTextDark,
       ),
 
-      // Headlines - Frank Ruhl Libre (Claude-like serif)
-      headlineLarge: GoogleFonts.frankRuhlLibre(
+      // Headlines - Spectral
+      headlineLarge: GoogleFonts.spectral(
         fontSize: 32,
         fontWeight: FontWeight.bold,
         color: parchmentTextMedium,
       ),
-      headlineMedium: GoogleFonts.frankRuhlLibre(
+      headlineMedium: GoogleFonts.spectral(
         fontSize: 24,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
-      headlineSmall: GoogleFonts.frankRuhlLibre(
+      headlineSmall: GoogleFonts.spectral(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
 
       // Titles
-      titleLarge: GoogleFonts.frankRuhlLibre(
-        fontSize: 20, // Slightly larger for readability
+      titleLarge: GoogleFonts.spectral(
+        fontSize: 20,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
-      titleMedium: GoogleFonts.frankRuhlLibre(
+      titleMedium: GoogleFonts.spectral(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
-      titleSmall: GoogleFonts.frankRuhlLibre(
+      titleSmall: GoogleFonts.spectral(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
       ),
 
-      // Labels - Keep Inter for UI elements for legibility
-      labelLarge: GoogleFonts.inter(
+      // Labels
+      labelLarge: GoogleFonts.spectral(
         fontSize: 14,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: parchmentTextDark,
       ),
-      labelMedium: GoogleFonts.inter(
+      labelMedium: GoogleFonts.spectral(
         fontSize: 12,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: parchmentTextDark,
       ),
     ),
@@ -108,7 +108,7 @@ ThemeData buildParchmentTheme() {
       foregroundColor: parchmentTextMedium,
       elevation: 0,
       centerTitle: false,
-      titleTextStyle: GoogleFonts.inter(
+      titleTextStyle: GoogleFonts.spectral(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: parchmentTextMedium,
@@ -124,7 +124,7 @@ ThemeData buildParchmentTheme() {
     // Chip Theme
     chipTheme: ChipThemeData(
       backgroundColor: Color(0xFFF0EDE8),
-      labelStyle: GoogleFonts.inter(
+      labelStyle: GoogleFonts.spectral(
         fontSize: 12,
         color: Color(0xFF5D4E3C),
       ),
@@ -146,11 +146,11 @@ ThemeData buildParchmentTheme() {
       backgroundColor: parchmentBackground,
       selectedItemColor: Color(0xFF8B7355),
       unselectedItemColor: Color(0xFF9E9E9E),
-      selectedLabelStyle: GoogleFonts.inter(
+      selectedLabelStyle: GoogleFonts.spectral(
         fontSize: 12,
         fontWeight: FontWeight.w600,
       ),
-      unselectedLabelStyle: GoogleFonts.inter(
+      unselectedLabelStyle: GoogleFonts.spectral(
         fontSize: 12,
       ),
       type: BottomNavigationBarType.fixed,

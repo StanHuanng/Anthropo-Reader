@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 多源新闻聚合爬虫 (Anthropo-Reader)
-支持: 微博热搜、知乎热榜、BBC中文、36Kr、少数派、TechCrunch、极客公园
-增强功能: 简繁转换、AI 翻译、优先级标记
+支持: BBC中文、纽约时报中文、华尔街日报中文、经济学人
+特点: 专注于高质量深度报道，支持 AI 摘要和优先级标记
 """
 
 import requests
@@ -31,15 +31,6 @@ cc = opencc.OpenCC('t2s')  # 繁体转简体
 # ==================== 配置区 ====================
 
 NEWS_SOURCES = {
-    # --- 国内热点 (API) ---
-    'weibo': {
-        'name': '微博热搜',
-        'category': 'domestic',
-        'type': 'api',
-        'url': 'https://weibo.com/ajax/side/hotSearch',
-        'source_id': 'news_domestic',
-    },
-
     # --- 国际新闻 (RSS) ---
     'bbc_chinese': {
         'name': 'BBC中文',
@@ -55,35 +46,19 @@ NEWS_SOURCES = {
         'url': 'https://cn.nytimes.com/rss/',
         'source_id': 'news_international',
     },
-
-    # --- 科技事件 (RSS) ---
-    '36kr': {
-        'name': '36氪',
-        'category': 'tech',
+    'wsj_chinese': {
+        'name': '华尔街日报中文',
+        'category': 'international',
         'type': 'rss',
-        'url': 'https://36kr.com/feed',
-        'source_id': 'news_tech',
+        'url': 'https://cn.wsj.com/zh-hans/rss',
+        'source_id': 'news_international',
     },
-    'geekpark': {
-        'name': '极客公园',
-        'category': 'tech',
+    'economist': {
+        'name': 'The Economist',
+        'category': 'international',
         'type': 'rss',
-        'url': 'https://www.geekpark.net/rss',
-        'source_id': 'news_tech',
-    },
-    'techcrunch': {
-        'name': 'TechCrunch',
-        'category': 'tech',
-        'type': 'rss',
-        'url': 'https://techcrunch.com/feed/',
-        'source_id': 'news_tech',
-    },
-    'sspai': {
-        'name': '少数派',
-        'category': 'tech',
-        'type': 'rss',
-        'url': 'https://sspai.com/feed',
-        'source_id': 'news_tech',
+        'url': 'https://www.economist.com/the-world-this-week/rss.xml',
+        'source_id': 'news_international',
     },
 }
 
@@ -92,7 +67,7 @@ HIGH_PRIORITY_KEYWORDS = [
     '政治', '经济', '政策', 'GDP', '贸易', '选举',
     'AI', '人工智能', '芯片', '半导体', 'GPT', 'LLM',
     'Apple', 'Google', 'Microsoft', 'OpenAI', 'Huawei',
-    '裁员', '融资', '上市', '重大', '突发'
+    '裁员', '融资', '上市', '重大', '突发', '深度', '调查'
 ]
 
 # ==================== 核心功能 ====================
@@ -111,21 +86,15 @@ def convert_to_simplified(text: str) -> str:
     if not text: return ""
     return cc.convert(text)
 
-def is_english(text: str) -> bool:
-    """简单的英文检测"""
-    if not text: return False
-    eng_chars = sum(1 for c in text if 'a' <= c.lower() <= 'z')
-    return eng_chars / len(text) > 0.5 if len(text) > 0 else False
-
 def calculate_priority(title: str, category: str) -> str:
     """计算文章优先级"""
-    # 1. 科技和国际类默认较高
-    if category in ['tech', 'international']:
+    # 国际深度报道默认较高
+    if category in ['international']:
         base_score = 1
     else:
         base_score = 0
 
-    # 2. 关键词匹配
+    # 关键词匹配
     for kw in HIGH_PRIORITY_KEYWORDS:
         if kw.lower() in title.lower():
             return 'high'
@@ -138,7 +107,7 @@ def fetch_rss_news(source_key: str, limit: int = 10) -> List[Dict]:
     print(f"📡 正在抓取 RSS: {config['name']}...", file=sys.stderr)
 
     try:
-        # 添加 User-Agent 以通过简单的反爬虫检查
+        # 添加 User-Agent
         feed = feedparser.parse(config['url'], agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
         articles = []
 
@@ -153,7 +122,7 @@ def fetch_rss_news(source_key: str, limit: int = 10) -> List[Dict]:
             if not clean_content:
                 clean_content = entry.title
 
-            # 繁简转换
+            # 繁简转换 (对英文内容无影响)
             title = convert_to_simplified(entry.title)
             clean_content = convert_to_simplified(clean_content)
 
@@ -184,73 +153,22 @@ def fetch_rss_news(source_key: str, limit: int = 10) -> List[Dict]:
         print(f"❌ {config['name']} 抓取失败: {e}", file=sys.stderr)
         return []
 
-def fetch_weibo_hot(limit: int = 15) -> List[Dict]:
-    """抓取微博热搜"""
-    config = NEWS_SOURCES['weibo']
-    print(f"📡 正在抓取 API: {config['name']}...", file=sys.stderr)
-
-    try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Cookie': 'SUB=_2AkMVWDUjf8NxqwJRmP0SzGvhZYt2yw_EieKjbJDZJRMxHRl-yT9jqhAbtRB6PfaN_xT-yL9-yL9-yL9-yL9-'
-        }
-        resp = requests.get(config['url'], headers=headers, timeout=10)
-        data = resp.json()
-
-        articles = []
-        items = data.get('data', {}).get('realtime', [])
-
-        for item in items[:limit]:
-            if 'word' not in item: continue
-
-            title = item.get('word', '')
-            note = item.get('note', '') or title
-            num = item.get('num', 0)
-            url = f"https://s.weibo.com/weibo?q={title}"
-
-            # 热搜前3名或含有关键词为高优先级
-            priority = 'high' if (len(articles) < 3 or calculate_priority(title, 'domestic') == 'high') else 'low'
-
-            articles.append({
-                'title': title,
-                'summary': f"热度: {num} | {note}",
-                'content': f"# {title}\n\n> 来源: 微博热搜\n\n**当前热度**: {num}\n\n{note}\n\n[查看讨论]({url})",
-                'source': config['source_id'],
-                'source_url': url,
-                'author': '微博热搜',
-                'category': config['category'],
-                'priority': priority,
-                'published_at': datetime.now().isoformat(),
-                'fetched_at': datetime.now().isoformat(),
-                'tags': ['微博', '热搜', 'domestic'],
-            })
-
-        print(f"✅ {config['name']}: 获取 {len(articles)} 条", file=sys.stderr)
-        return articles
-    except Exception as e:
-        print(f"❌ {config['name']} 抓取失败: {e}", file=sys.stderr)
-        return []
-
 def process_with_ai(articles: List[Dict], api_key: str):
-    """使用 AI 生成摘要和翻译"""
+    """使用 AI 生成摘要"""
     try:
         from ai_summarizer import generate_summary
 
-        print(f"\n🤖 开始 AI 摘要生成与翻译 (共 {len(articles)} 条)...", file=sys.stderr)
+        print(f"\n🤖 开始 AI 摘要生成 (共 {len(articles)} 条)...", file=sys.stderr)
 
         count = 0
         for i, article in enumerate(articles):
             if len(article['content']) < 100: continue
             if count > 0: time.sleep(1.5)
 
-            # 使用 is_english_content 避免与函数名冲突
-            is_english_content = article.get('is_english', False) or is_english(article['title'])
-            action = "翻译与摘要" if is_english_content else "生成摘要"
+            # 不再强制翻译，统一使用 news 类型生成摘要
+            print(f"[{i+1}/{len(articles)}] 生成摘要: {article['title'][:20]}...", file=sys.stderr)
 
-            print(f"[{i+1}/{len(articles)}] {action}: {article['title'][:20]}...", file=sys.stderr)
-
-            content_type = 'news_en' if is_english_content else 'news'
-            ai_summary = generate_summary(article['content'], content_type, api_key)
+            ai_summary = generate_summary(article['content'], 'news', api_key)
 
             if ai_summary:
                 article['ai_summary'] = ai_summary
@@ -307,27 +225,19 @@ def main():
 
     all_news = []
 
-    # 1. 抓取各源
-    # 国内
-    all_news.extend(fetch_weibo_hot(limit=args.limit))
-
-    # 国际
+    # 抓取各高质量源
     all_news.extend(fetch_rss_news('bbc_chinese', limit=args.limit))
     all_news.extend(fetch_rss_news('nytimes_chinese', limit=args.limit))
-
-    # 科技 (新源)
-    all_news.extend(fetch_rss_news('36kr', limit=args.limit))
-    all_news.extend(fetch_rss_news('geekpark', limit=args.limit))
-    all_news.extend(fetch_rss_news('techcrunch', limit=args.limit))
-    all_news.extend(fetch_rss_news('sspai', limit=args.limit))
+    all_news.extend(fetch_rss_news('wsj_chinese', limit=args.limit))
+    all_news.extend(fetch_rss_news('economist', limit=args.limit))
 
     print(f"\n📦 共抓取到 {len(all_news)} 条新闻", file=sys.stderr)
 
-    # 2. AI 处理
+    # AI 处理
     if args.ai and api_key:
         process_with_ai(all_news, api_key)
 
-    # 3. 上传
+    # 上传
     if args.upload:
         if args.supabase_url and args.supabase_key:
             save_to_supabase(all_news, args.supabase_url, args.supabase_key)

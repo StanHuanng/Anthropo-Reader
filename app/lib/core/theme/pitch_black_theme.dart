@@ -28,64 +28,64 @@ ThemeData buildPitchBlackTheme() {
 
     // Text Theme
     textTheme: TextTheme(
-      // Body text - Lora
-      bodyLarge: GoogleFonts.lora(
+      // Body text - Spectral
+      bodyLarge: GoogleFonts.spectral(
         fontSize: 18,
         height: 1.6,
         color: pitchBlackTextMedium,
       ),
-      bodyMedium: GoogleFonts.lora(
+      bodyMedium: GoogleFonts.spectral(
         fontSize: 16,
         height: 1.6,
         color: pitchBlackTextMedium,
       ),
-      bodySmall: GoogleFonts.lora(
+      bodySmall: GoogleFonts.spectral(
         fontSize: 14,
         height: 1.5,
         color: pitchBlackTextDim,
       ),
 
-      // Headlines - Inter
-      headlineLarge: GoogleFonts.inter(
+      // Headlines - Spectral
+      headlineLarge: GoogleFonts.spectral(
         fontSize: 32,
         fontWeight: FontWeight.bold,
         color: pitchBlackTextLight,
       ),
-      headlineMedium: GoogleFonts.inter(
+      headlineMedium: GoogleFonts.spectral(
         fontSize: 24,
         fontWeight: FontWeight.w600,
         color: pitchBlackTextLight,
       ),
-      headlineSmall: GoogleFonts.inter(
+      headlineSmall: GoogleFonts.spectral(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: pitchBlackTextLight,
       ),
 
       // Titles
-      titleLarge: GoogleFonts.inter(
+      titleLarge: GoogleFonts.spectral(
         fontSize: 18,
         fontWeight: FontWeight.w600,
         color: pitchBlackTextLight,
       ),
-      titleMedium: GoogleFonts.inter(
+      titleMedium: GoogleFonts.spectral(
         fontSize: 16,
         fontWeight: FontWeight.w500,
         color: pitchBlackTextLight,
       ),
-      titleSmall: GoogleFonts.inter(
+      titleSmall: GoogleFonts.spectral(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: pitchBlackTextMedium,
       ),
 
       // Labels
-      labelLarge: GoogleFonts.inter(
+      labelLarge: GoogleFonts.spectral(
         fontSize: 14,
         fontWeight: FontWeight.w500,
         color: pitchBlackTextMedium,
       ),
-      labelMedium: GoogleFonts.inter(
+      labelMedium: GoogleFonts.spectral(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: pitchBlackTextDim,
@@ -109,7 +109,7 @@ ThemeData buildPitchBlackTheme() {
       foregroundColor: pitchBlackTextLight,
       elevation: 0,
       centerTitle: false,
-      titleTextStyle: GoogleFonts.inter(
+      titleTextStyle: GoogleFonts.spectral(
         fontSize: 20,
         fontWeight: FontWeight.w600,
         color: pitchBlackTextLight,
@@ -125,7 +125,7 @@ ThemeData buildPitchBlackTheme() {
     // Chip Theme
     chipTheme: ChipThemeData(
       backgroundColor: Color(0xFF252525),
-      labelStyle: GoogleFonts.inter(
+      labelStyle: GoogleFonts.spectral(
         fontSize: 12,
         color: pitchBlackTextMedium,
       ),
@@ -147,11 +147,11 @@ ThemeData buildPitchBlackTheme() {
       backgroundColor: pitchBlackBackground,
       selectedItemColor: Color(0xFFE0D4C8),
       unselectedItemColor: Color(0xFF666666),
-      selectedLabelStyle: GoogleFonts.inter(
+      selectedLabelStyle: GoogleFonts.spectral(
         fontSize: 12,
         fontWeight: FontWeight.w600,
       ),
-      unselectedLabelStyle: GoogleFonts.inter(
+      unselectedLabelStyle: GoogleFonts.spectral(
         fontSize: 12,
       ),
       type: BottomNavigationBarType.fixed,
