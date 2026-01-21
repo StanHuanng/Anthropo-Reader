@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 多源新闻聚合爬虫 (Anthropo-Reader)
-支持: BBC中文、纽约时报中文、华尔街日报中文、经济学人
+支持: BBC中文、纽约时报中文
 特点: 专注于高质量深度报道，支持 AI 摘要和优先级标记
 """
 
@@ -44,20 +44,6 @@ NEWS_SOURCES = {
         'category': 'international',
         'type': 'rss',
         'url': 'https://cn.nytimes.com/rss/',
-        'source_id': 'news_international',
-    },
-    'wsj_chinese': {
-        'name': '华尔街日报中文',
-        'category': 'international',
-        'type': 'rss',
-        'url': 'https://cn.wsj.com/zh-hans/rss',
-        'source_id': 'news_international',
-    },
-    'economist': {
-        'name': 'The Economist',
-        'category': 'international',
-        'type': 'rss',
-        'url': 'https://www.economist.com/the-world-this-week/rss.xml',
         'source_id': 'news_international',
     },
 }
@@ -228,8 +214,6 @@ def main():
     # 抓取各高质量源
     all_news.extend(fetch_rss_news('bbc_chinese', limit=args.limit))
     all_news.extend(fetch_rss_news('nytimes_chinese', limit=args.limit))
-    all_news.extend(fetch_rss_news('wsj_chinese', limit=args.limit))
-    all_news.extend(fetch_rss_news('economist', limit=args.limit))
 
     print(f"\n📦 共抓取到 {len(all_news)} 条新闻", file=sys.stderr)
 

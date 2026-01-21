@@ -73,7 +73,48 @@ class ReaderPage extends StatelessWidget {
                   ),
                 ),
 
-              // Markdown Content
+              // AI Summary (如果存在，优先显示)
+              if (article.aiSummary != null && article.aiSummary!.isNotEmpty) ...[
+                Container(
+                  padding: EdgeInsets.all(16),
+                  margin: EdgeInsets.only(bottom: 24),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                      width: 1,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.auto_awesome,
+                            size: 18,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            'AI 智能摘要',
+                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      MarkdownRenderer(content: article.aiSummary!),
+                    ],
+                  ),
+                ),
+                Divider(height: 32),
+              ],
+
+              // Original Content
               MarkdownRenderer(content: article.content),
             ],
           ),
